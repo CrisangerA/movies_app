@@ -3,6 +3,8 @@ import styled from 'styled-components/native';
 import React from 'react';
 import { RootStackParams } from '../../../navigation';
 import { TextBody } from '../../Text';
+import { Movie, setMovieSelected } from '../../../store/slices/movies';
+import { useAppDispatch } from '../../../hooks';
 
 const RootStyle = styled.View`
   display: flex;
@@ -17,22 +19,31 @@ const Picture = styled.Image`
 `;
 
 interface CardProps {
-  movie: string;
+  movie: Movie
 }
-
 const Card: React.FC<CardProps> = ({ movie }) => {
+  
+  const { id, title, vote_average, poster_path } = movie;
   const navigation = useNavigation<NavigationProp<RootStackParams, 'Details'>>();
-  const handleChangePage = () => navigation.navigate('Details',{ movieId: 2 });
+  const dispatch = useAppDispatch();
+  
+  const handleChangePage = () => {
+    dispatch(setMovieSelected(movie));
+    navigation.navigate('Details', { movie: movie });
+  };
+
   return (
     <RootStyle onTouchEnd={handleChangePage}>
       <Picture
-        source={{ uri: 'https://m.media-amazon.com/images/I/81rypQUyjFL._SL1363_.jpg' }}
+        source={{
+          uri: `https://image.tmdb.org/t/p/w500/${poster_path}`
+        }}
       />
       <TextBody>
-        {movie}
+        {title}
       </TextBody>
       <TextBody>
-        Starts
+        {vote_average}
       </TextBody>
     </RootStyle>
   )
