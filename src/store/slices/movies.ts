@@ -1,21 +1,32 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+export interface Actor {
+  id: string;
+  name: string;
+  profile_path: string;
+}
 export interface Movie {
   id: string;
   title: string;
   vote_average: number;
   poster_path: string;
+  backdrop_path: string;
+  overview: string;
+  actors: Actor[] | undefined;
 }
-
+// -------------------------------------------------------------------------------
 interface MovieState {
   loaded: boolean;
   movies: Movie[];
 }
-
-export interface MoviesState {
+interface MovieSelected {
+  movie: Movie | null;
+  actors: Actor[] | null;
+}
+interface MoviesState {
   recomended: MovieState;
   topRated: MovieState;
-  selected: Movie | null;
+  selected: MovieSelected
 }
 
 const initialState: MoviesState = {
@@ -27,7 +38,10 @@ const initialState: MoviesState = {
     loaded: false,
     movies: [],    
   },
-  selected: null
+  selected: {
+    actors: null,
+    movie: null
+  }
 }
 
 export const counterSlice = createSlice({
@@ -43,7 +57,10 @@ export const counterSlice = createSlice({
       state.topRated.movies = action.payload.movies;
     },
     setMovieSelected: (state, action: PayloadAction<Movie>) => {
-      state.selected = action.payload;
+      state.selected.movie = action.payload;
+    },
+    setActorsMovie: (state, action: PayloadAction<Actor[]>) => {
+      state.selected.actors = action.payload;
     }
   },
 });
@@ -51,14 +68,25 @@ export const { setMovieSelected } = counterSlice.actions
 
 export default counterSlice.reducer;
 
+const API_KEY = 'bdeeba2f37e3b915bba65a658be1b1d9';
 export const getRecomended = () => async (dispatch: any) => {
   try {
-    const res = await fetch('https://api.themoviedb.org/3/discover/movie?api_key=bdeeba2f37e3b915bba65a658be1b1d9');
+    const res = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}`);
     const data = await res.json();
     dispatch(counterSlice.actions.setRecomended({ 
       loaded: true, 
       movies: data.results as Movie[]
     }));
+  } catch (e) {
+    throw e;
+  }
+}
+
+export const getCredits = (movie_id: string) => async (dispatch: any) => {
+  try {
+    const res = await fetch(`https://api.themoviedb.org/3/movie/${movie_id}/credits?api_key=${API_KEY}`);
+    const data = await res.json();    
+    dispatch(counterSlice.actions.setActorsMovie(data.cast as Actor[]));
   } catch (e) {
     throw e;
   }

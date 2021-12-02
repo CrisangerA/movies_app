@@ -1,15 +1,16 @@
 import React from 'react';
 import styled from 'styled-components/native';
+import { h, w } from '../../utils/dimensions';
 
 const RootStyle = styled.View`
-  width: 100%;
-  heigth: 30%;  
-  border-radius: 25px;
+
 `;
 const ImageStyle = styled.Image`
-  width: 100%;
-  height: 30%;
-  resize-mode: contain;  
+  width: ${w(100)}px;
+  height: ${h(39)}px;  
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  resize-mode: cover;
 `;
 
 const Header: React.FC<{ image_id: string }> = ({ image_id }) => {

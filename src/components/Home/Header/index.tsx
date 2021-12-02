@@ -5,10 +5,13 @@ import { Title } from '../../Text';
 
 // --------------------------
 const HeaderStyle = styled.View`
+  position: absolute;
+  z-index: -1;
   display: flex;
-  alignItems: center;  
-  padding: 30px 40px;
-  background-color: ${props => props.theme.colors.primary};
+  flex: 1;
+  alignItems: center;
+  padding: 40px 40px;
+  background-color: ${props => props.theme.colors.primary};  
 `;
 
 const Header: React.FC = () => {
@@ -18,6 +21,7 @@ const Header: React.FC = () => {
         Hello, what do you want to watch?
       </Title>
       <Search />
+      
     </HeaderStyle>
   );
 }
